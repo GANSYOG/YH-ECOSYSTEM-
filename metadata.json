@@ -1,0 +1,7 @@
+{
+  "name": "YH Ecosystem Orchestrator",
+  "description": "A web application to visualize and explore the agents and divisions within the YH Ecosystem Orchestrator. It provides a clear, interactive interface to understand the roles, responsibilities, and interactions of each component.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

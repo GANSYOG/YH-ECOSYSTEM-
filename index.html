@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YH Ecosystem Orchestrator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'brand-primary': '#0ea5e9',
+              'brand-secondary': '#14b8a6',
+              'dark-100': '#0f172a',
+              'dark-200': '#1e293b',
+              'dark-300': '#334155',
+              'dark-content': '#cbd5e1',
+              'light-100': '#f8fafc',
+              'light-200': '#f1f5f9',
+              'light-300': '#e2e8f0',
+              'light-content': '#0f172a',
+            },
+            keyframes: {
+              fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+            },
+            animation: { fadeIn: 'fadeIn 0.3s ease-out' },
+          }
+        }
+      }
+    </script>
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@19.0.0",
+        "react/": "https://esm.sh/react@19.0.0/",
+        "react-dom": "https://esm.sh/react-dom@19.0.0",
+        "react-dom/": "https://esm.sh/react-dom@19.0.0/",
+        "@google/genai": "https://esm.sh/@google/genai@0.16.0"
+      }
+    }
+    </script>
+    <style>
+      #root { min-height: 100vh; display: flex; flex-direction: column; }
+      body { margin: 0; padding: 0; }
+    </style>
+  </head>
+  <body class="bg-light-100 dark:bg-dark-100">
+    <div id="root"></div>
+  </body>
+</html>
