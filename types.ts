@@ -38,7 +38,22 @@ export interface Ecosystem {
   };
 }
 
+export interface SynapticAction {
+  tool: string;
+  input: string;
+  status: string;
+}
+
+export interface SynapticArtifact {
+  type: 'document' | 'code' | 'plan' | string;
+  title: string;
+  content: string;
+}
+
 export interface GeminiMessage {
   role: 'user' | 'model';
   text: string;
+  thought_process?: string;
+  actions?: SynapticAction[];
+  artifacts?: SynapticArtifact[];
 }
