@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { Agent, User } from '../types';
 import { CloseIcon, InputIcon, OutputIcon, TriggerIcon, CheckCircleIcon, CopyIcon } from './Icons';
-import SimulationTraceViewer from './SimulationTraceViewer';
+import { AgentBrainChat } from './AgentBrainChat';
 
 interface AgentModalProps {
   agent: Agent;
@@ -10,10 +10,10 @@ interface AgentModalProps {
   onClose: () => void;
   onOpenInteractiveDemo: (agent: Agent) => void;
   onCopyConfig: (agent: Agent) => void;
-  initialView?: 'details' | 'simulation';
+  initialView?: 'details' | 'chat';
 }
 
-type ModalView = 'details' | 'simulation';
+type ModalView = 'details' | 'chat';
 
 const TagList: React.FC<{ title: string; items: string[]; icon: React.ReactNode; color: string }> = ({ title, items, icon, color }) => {
   if (!items || items.length === 0) return null;
@@ -36,7 +36,7 @@ const TagList: React.FC<{ title: string; items: string[]; icon: React.ReactNode;
 
 const AgentModal: React.FC<AgentModalProps> = ({ agent, onClose, onCopyConfig, initialView = 'details' }) => {
     const modalRef = useRef<HTMLDivElement>(null);
-    const [view, setView] = useState<ModalView>(initialView === 'simulation' ? 'simulation' : 'details');
+    const [view, setView] = useState<ModalView>(initialView === 'chat' ? 'chat' : 'details');
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -47,43 +47,58 @@ const AgentModal: React.FC<AgentModalProps> = ({ agent, onClose, onCopyConfig, i
     }, [onClose]);
 
     return (
-        <div className="fixed inset-0 bg-dark-100/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
+        <div className="fixed inset-0 bg-dark-100/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
             <div
                 ref={modalRef}
-                className="bg-light-100 dark:bg-dark-200 rounded-2xl border dark:border-dark-300 border-light-300 shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden"
+                className="bg-light-100 dark:bg-dark-200 rounded-[2rem] border dark:border-dark-300 border-light-300 shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden relative"
                 onClick={(e) => e.stopPropagation()}
             >
-                <header className="flex items-start justify-between p-6 border-b dark:border-dark-300 border-light-300">
+                {/* Modal Glow */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-brand-primary to-transparent opacity-50" />
+
+                <header className="flex items-start justify-between p-8 border-b dark:border-dark-300 border-light-300 relative z-10 bg-light-100/50 dark:bg-dark-200/50 backdrop-blur-md">
                     <div className="flex-1">
-                        <div className="flex items-center gap-3">
-                            <h2 className="text-2xl font-bold dark:text-white text-light-content">{agent.name}</h2>
-                            <button
-                                onClick={() => onCopyConfig(agent)}
-                                className="p-1 rounded-md text-slate-400 hover:text-brand-primary transition-colors"
-                                title="Copy Configuration"
-                            >
-                                <CopyIcon className="h-5 w-5" />
-                            </button>
+                        <div className="flex items-center gap-4">
+                            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white shadow-lg shadow-brand-primary/20">
+                                <span className="text-xl font-black">{agent.name[0]}</span>
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-3">
+                                    <h2 className="text-3xl font-black dark:text-white text-light-content tracking-tight">{agent.name}</h2>
+                                    <button
+                                        onClick={() => onCopyConfig(agent)}
+                                        className="p-2 rounded-xl text-slate-400 hover:text-brand-primary hover:bg-brand-primary/10 transition-all active:scale-90"
+                                        title="Copy Neural Signature"
+                                    >
+                                        <CopyIcon className="h-5 w-5" />
+                                    </button>
+                                </div>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-xs text-brand-secondary font-black uppercase tracking-[0.2em]">{agent.role}</span>
+                                    <span className="h-1 w-1 rounded-full bg-slate-400" />
+                                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{agent.id}</span>
+                                    <span className="ml-2 text-[8px] bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded font-black tracking-widest border border-brand-primary/20">PHD LEVEL EXPERTISE</span>
+                                </div>
+                            </div>
                         </div>
-                        <p className="text-sm text-brand-secondary font-bold uppercase tracking-wider mt-1">{agent.role}</p>
                     </div>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-light-300 dark:hover:bg-dark-300 transition-colors text-slate-500">
+                    <button onClick={onClose} className="p-3 rounded-2xl hover:bg-red-500/10 hover:text-red-500 transition-all text-slate-500 active:scale-90">
                         <CloseIcon />
                     </button>
                 </header>
 
-                <div className="flex border-b dark:border-dark-300 border-light-300 bg-light-200 dark:bg-dark-100/30 overflow-x-auto custom-scrollbar">
+                <div className="flex px-8 border-b dark:border-dark-300 border-light-300 bg-light-200/30 dark:bg-dark-100/30 overflow-x-auto custom-scrollbar gap-2">
                     <button 
                         onClick={() => setView('details')}
-                        className={`px-6 py-3 text-xs font-bold uppercase tracking-widest transition-colors border-b-2 whitespace-nowrap ${view === 'details' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-white'}`}
+                        className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all border-b-2 whitespace-nowrap ${view === 'details' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-white'}`}
                     >
-                        Specs
+                        Neural Specifications
                     </button>
                     <button 
-                        onClick={() => setView('simulation')}
-                        className={`px-6 py-3 text-xs font-bold uppercase tracking-widest transition-colors border-b-2 whitespace-nowrap ${view === 'simulation' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-white'}`}
+                        onClick={() => setView('chat')}
+                        className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all border-b-2 whitespace-nowrap ${view === 'chat' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-white'}`}
                     >
-                        Trace
+                        Neural Link
                     </button>
                 </div>
 
@@ -131,15 +146,23 @@ const AgentModal: React.FC<AgentModalProps> = ({ agent, onClose, onCopyConfig, i
                         </div>
                     )}
                     
-                    {view === 'simulation' && <SimulationTraceViewer agentId={agent.id} />}
+                    {view === 'chat' && <AgentBrainChat agent={agent} />}
                 </div>
 
-                <footer className="p-6 border-t dark:border-dark-300 border-light-300 flex justify-end items-center bg-light-200 dark:bg-dark-300/30">
+                <footer className="p-8 border-t dark:border-dark-300 border-light-300 flex justify-between items-center bg-light-200/50 dark:bg-dark-300/30 backdrop-blur-md">
+                    <div className="flex items-center gap-4">
+                       <div className="flex -space-x-2">
+                          {[1,2,3].map(i => (
+                             <div key={i} className="h-8 w-8 rounded-full border-2 border-white dark:border-dark-200 bg-slate-300 dark:bg-dark-400" />
+                          ))}
+                       </div>
+                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Connected Nodes</p>
+                    </div>
                     <button
                         onClick={onClose}
-                        className="px-6 py-2 rounded-lg bg-brand-primary text-white text-sm font-bold hover:bg-sky-400 transition-colors shadow-lg shadow-brand-primary/20"
+                        className="px-8 py-3 rounded-2xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-brand-primary/20 active:scale-95"
                     >
-                        Close Inspector
+                        Secure Neural Uplink
                     </button>
                 </footer>
             </div>

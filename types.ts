@@ -38,12 +38,6 @@ export interface Ecosystem {
   };
 }
 
-export interface SimulationTraceStep {
-  timestamp: string;
-  title: string;
-  payload: Record<string, any>;
-}
-
 export interface GeminiMessage {
   role: 'user' | 'model';
   text: string;

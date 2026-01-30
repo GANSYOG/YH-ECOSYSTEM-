@@ -81,37 +81,56 @@ export const AuthModal: React.FC = () => {
     };
 
     return (
-        <div className="fixed inset-0 bg-dark-200 z-50 flex items-center justify-center p-4">
-            <div className="bg-dark-300 rounded-xl border border-dark-300/50 shadow-2xl w-full max-w-sm flex flex-col">
-                <header className="p-6">
-                    <h2 className="text-2xl font-bold text-white text-center">
-                        {isRegister ? 'Create Account' : 'Welcome Back'}
+        <div className="fixed inset-0 bg-dark-100 z-50 flex items-center justify-center p-6">
+            {/* Background Effects */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-primary/10 via-transparent to-transparent opacity-50" />
+
+            <div className="bg-dark-200/80 backdrop-blur-2xl rounded-[2.5rem] border border-dark-300 shadow-2xl w-full max-w-md flex flex-col overflow-hidden animate-fadeIn relative z-10">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-primary to-brand-secondary" />
+
+                <header className="p-10 pb-6 text-center">
+                    <div className="h-16 w-16 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg shadow-brand-primary/20 rotate-3">
+                        <span className="text-3xl font-black text-white italic">YH</span>
+                    </div>
+                    <h2 className="text-3xl font-black text-white tracking-tighter">
+                        {isRegister ? 'Initialize Access' : 'Neural Uplink'}
                     </h2>
-                    <p className="text-slate-400 text-center mt-1">
-                        {isRegister ? 'to the YH Ecosystem Orchestrator' : 'Sign in to continue'}
+                    <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2 opacity-60">
+                        {isRegister ? 'Register your neural signature' : 'Verify your system credentials'}
                     </p>
                 </header>
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+
+                <form onSubmit={handleSubmit} className="px-10 py-6 space-y-6">
                     {error && (
-                        <div className="bg-red-900/50 border border-red-500/30 text-red-300 text-sm rounded-md p-3 text-center">
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold rounded-xl p-4 text-center animate-pulse">
                             {error}
                         </div>
                     )}
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-1">Email Address</label>
-                        <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required className="w-full bg-dark-200 border border-dark-300 text-white rounded-md p-2 focus:ring-brand-primary focus:border-brand-primary" />
+                    <div className="space-y-2">
+                        <label htmlFor="email" className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Command Email</label>
+                        <input
+                          type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required
+                          className="w-full bg-dark-300/50 border border-dark-400 text-white rounded-2xl p-4 text-sm focus:ring-2 focus:ring-brand-primary focus:bg-dark-300 transition-all outline-none"
+                        />
                     </div>
-                    <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-1">Password</label>
-                        <input type="password" id="password" value={password} onChange={e => setPassword(e.target.value)} required className="w-full bg-dark-200 border border-dark-300 text-white rounded-md p-2 focus:ring-brand-primary focus:border-brand-primary" />
+                    <div className="space-y-2">
+                        <label htmlFor="password" className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Access Cipher</label>
+                        <input
+                          type="password" id="password" value={password} onChange={e => setPassword(e.target.value)} required
+                          className="w-full bg-dark-300/50 border border-dark-400 text-white rounded-2xl p-4 text-sm focus:ring-2 focus:ring-brand-primary focus:bg-dark-300 transition-all outline-none"
+                        />
                     </div>
-                    <button type="submit" disabled={isLoading} className="w-full flex justify-center items-center px-4 py-2 rounded-md font-semibold text-white bg-brand-primary hover:bg-sky-400 transition-colors duration-200 disabled:bg-slate-500 disabled:cursor-not-allowed">
-                        {isLoading ? 'Processing...' : (isRegister ? 'Register' : 'Login')}
+                    <button
+                      type="submit" disabled={isLoading}
+                      className="w-full flex justify-center items-center px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-xs text-white bg-gradient-to-r from-brand-primary to-brand-secondary hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:grayscale shadow-xl shadow-brand-primary/25 active:scale-95"
+                    >
+                        {isLoading ? 'Decrypting...' : (isRegister ? 'Authorize' : 'Initialize')}
                     </button>
                 </form>
-                <footer className="p-6 border-t border-dark-300/50 text-center">
-                    <button onClick={() => setIsRegister(!isRegister)} className="text-sm text-brand-primary hover:underline">
-                        {isRegister ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+
+                <footer className="p-10 pt-4 text-center">
+                    <button onClick={() => setIsRegister(!isRegister)} className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-brand-primary transition-colors">
+                        {isRegister ? 'Already Authorized? Sign In' : "New Operator? Request Access"}
                     </button>
                 </footer>
             </div>

@@ -29,20 +29,25 @@ const ContentPanel: React.FC<ContentPanelProps> = ({
   currentPage, setCurrentPage, agentsPerPage
 }) => {
   return (
-    <div className="flex-1 overflow-hidden p-6 md:p-8 flex flex-col h-full">
-      <div className="mb-6 flex-shrink-0 flex flex-wrap justify-between items-end gap-4">
+    <div className="flex-1 overflow-hidden p-6 md:p-10 flex flex-col h-full relative z-10">
+      <div className="mb-10 flex-shrink-0 flex flex-wrap justify-between items-center gap-6">
         <div>
-          <h2 className="text-3xl font-bold dark:text-white text-light-content">{title}</h2>
-          <p className="text-slate-500 text-sm mt-1">
-            {isLoading ? 'Scanning ecosystem layers...' : `${totalAgents} units active in selected sector.`}
-          </p>
+          <h2 className="text-4xl font-black dark:text-white text-light-content tracking-tight">{title}</h2>
+          <div className="flex items-center gap-3 mt-2">
+             <div className={`h-1.5 w-1.5 rounded-full ${isLoading ? 'bg-amber-500 animate-pulse' : 'bg-brand-primary'}`} />
+             <p className="text-slate-500 text-xs font-bold uppercase tracking-widest opacity-70">
+               {isLoading ? 'Syncing Neural Pathways...' : `${totalAgents} Core Units Operational`}
+             </p>
+          </div>
         </div>
         {!isSearchActive && (
-          <DivisionFilter
-            allDivisions={allDivisions}
-            selectedDivisions={selectedDivisions}
-            setSelectedDivisions={setSelectedDivisions}
-          />
+          <div className="bg-light-200/50 dark:bg-dark-200/50 p-1.5 rounded-2xl border border-light-300 dark:border-dark-300 backdrop-blur-sm">
+            <DivisionFilter
+              allDivisions={allDivisions}
+              selectedDivisions={selectedDivisions}
+              setSelectedDivisions={setSelectedDivisions}
+            />
+          </div>
         )}
       </div>
       

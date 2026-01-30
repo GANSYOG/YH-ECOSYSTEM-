@@ -69,39 +69,41 @@ const Pagination: React.FC<PaginationProps> = ({
     const paginationItems = getPaginationItems();
 
     return (
-        <nav className="flex items-center justify-center gap-2 mt-4" aria-label="Pagination">
+        <nav className="flex items-center justify-center gap-3 mt-8" aria-label="Pagination">
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-3 py-1 text-sm font-medium rounded-md transition-colors dark:bg-dark-300 bg-light-300 dark:text-dark-content text-light-content hover:bg-brand-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300 dark:bg-dark-300 bg-light-300 dark:text-slate-400 text-slate-600 hover:text-brand-primary hover:bg-brand-primary/10 disabled:opacity-30 disabled:cursor-not-allowed border border-transparent hover:border-brand-primary/20"
                 aria-label="Go to previous page"
             >
                 Prev
             </button>
-            {paginationItems.map((item, index) => {
-                 if (typeof item === 'string') {
-                    return <span key={`ellipsis-${index}`} className="px-3 py-1 text-sm font-medium dark:text-dark-content text-light-content">...</span>;
-                }
-                return (
-                    <button
-                        key={item}
-                        onClick={() => onPageChange(item)}
-                        className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
-                            currentPage === item
-                                ? 'bg-brand-primary text-white'
-                                : 'dark:bg-dark-300 bg-light-300 dark:text-dark-content text-light-content hover:bg-brand-primary/20'
-                        }`}
-                        aria-current={currentPage === item ? 'page' : undefined}
-                        aria-label={`Go to page ${item}`}
-                    >
-                        {item}
-                    </button>
-                )
-            })}
+            <div className="flex items-center gap-2 px-2 py-1 bg-light-200/50 dark:bg-dark-300/30 rounded-2xl border border-light-300/50 dark:border-dark-400/50">
+                {paginationItems.map((item, index) => {
+                     if (typeof item === 'string') {
+                        return <span key={`ellipsis-${index}`} className="px-3 text-xs font-black text-slate-400">...</span>;
+                    }
+                    return (
+                        <button
+                            key={item}
+                            onClick={() => onPageChange(item)}
+                            className={`h-10 w-10 text-xs font-black rounded-xl transition-all duration-300 ${
+                                currentPage === item
+                                    ? 'bg-gradient-to-br from-brand-primary to-brand-secondary text-white shadow-lg shadow-brand-primary/20 scale-110 z-10'
+                                    : 'dark:text-slate-500 text-slate-500 hover:text-brand-primary hover:bg-brand-primary/5'
+                            }`}
+                            aria-current={currentPage === item ? 'page' : undefined}
+                            aria-label={`Go to page ${item}`}
+                        >
+                            {item}
+                        </button>
+                    )
+                })}
+            </div>
              <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1 text-sm font-medium rounded-md transition-colors dark:bg-dark-300 bg-light-300 dark:text-dark-content text-light-content hover:bg-brand-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300 dark:bg-dark-300 bg-light-300 dark:text-slate-400 text-slate-600 hover:text-brand-primary hover:bg-brand-primary/10 disabled:opacity-30 disabled:cursor-not-allowed border border-transparent hover:border-brand-primary/20"
                 aria-label="Go to next page"
             >
                 Next

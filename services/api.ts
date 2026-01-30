@@ -1,6 +1,5 @@
 import { ecosystemData } from '../data/ecosystemData';
-import { simulationTraces } from '../data/simulationData';
-import type { Agent, User, SimulationTraceStep } from '../types';
+import type { Agent, User } from '../types';
 
 // Flatten the hierarchical division data into a standard map for easy lookup
 const isAgentArray = (value: unknown): value is Agent[] => {
@@ -61,10 +60,6 @@ export const fetchAgents = async (options: { divisions?: string[], searchQuery?:
     const total = filteredAgents.length;
     const paginated = filteredAgents.slice((page - 1) * limit, page * limit);
     return quickReturn({ agents: paginated, total });
-};
-
-export const fetchSimulationTrace = async (agentId: string): Promise<SimulationTraceStep[]> => {
-    return quickReturn(simulationTraces.get(agentId) || []);
 };
 
 export const updateAgentConfig = async (_user: User, _id: string, _config: Partial<Agent>) => {
