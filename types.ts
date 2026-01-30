@@ -43,3 +43,8 @@ export interface SimulationTraceStep {
   title: string;
   payload: Record<string, any>;
 }
+
+export interface GeminiMessage {
+  role: 'user' | 'model';
+  text: string;
+}

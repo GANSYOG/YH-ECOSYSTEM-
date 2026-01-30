@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { Agent, User } from '../types';
 import { CloseIcon, InputIcon, OutputIcon, TriggerIcon, CheckCircleIcon, CopyIcon } from './Icons';
 import SimulationTraceViewer from './SimulationTraceViewer';
-import { VoiceDemo } from './VoiceDemo';
 
 interface AgentModalProps {
   agent: Agent;
@@ -11,6 +10,7 @@ interface AgentModalProps {
   onClose: () => void;
   onOpenInteractiveDemo: (agent: Agent) => void;
   onCopyConfig: (agent: Agent) => void;
+  initialView?: 'details' | 'simulation';
 }
 
 type ModalView = 'details' | 'simulation';
@@ -34,10 +34,9 @@ const TagList: React.FC<{ title: string; items: string[]; icon: React.ReactNode;
   );
 };
 
-// Fix for line 6 in App.tsx: Complete component implementation and add default export
-const AgentModal: React.FC<AgentModalProps> = ({ agent, onClose, onCopyConfig }) => {
+const AgentModal: React.FC<AgentModalProps> = ({ agent, onClose, onCopyConfig, initialView = 'details' }) => {
     const modalRef = useRef<HTMLDivElement>(null);
-    const [view, setView] = useState<ModalView>('details');
+    const [view, setView] = useState<ModalView>(initialView === 'simulation' ? 'simulation' : 'details');
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -46,7 +45,7 @@ const AgentModal: React.FC<AgentModalProps> = ({ agent, onClose, onCopyConfig })
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [onClose]);
-    
+
     return (
         <div className="fixed inset-0 bg-dark-100/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
             <div
@@ -73,24 +72,24 @@ const AgentModal: React.FC<AgentModalProps> = ({ agent, onClose, onCopyConfig })
                     </button>
                 </header>
 
-                <div className="flex border-b dark:border-dark-300 border-light-300">
+                <div className="flex border-b dark:border-dark-300 border-light-300 bg-light-200 dark:bg-dark-100/30 overflow-x-auto custom-scrollbar">
                     <button 
                         onClick={() => setView('details')}
-                        className={`px-6 py-3 text-sm font-bold transition-colors border-b-2 ${view === 'details' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-white'}`}
+                        className={`px-6 py-3 text-xs font-bold uppercase tracking-widest transition-colors border-b-2 whitespace-nowrap ${view === 'details' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-white'}`}
                     >
-                        Unit Specs
+                        Specs
                     </button>
                     <button 
                         onClick={() => setView('simulation')}
-                        className={`px-6 py-3 text-sm font-bold transition-colors border-b-2 ${view === 'simulation' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-white'}`}
+                        className={`px-6 py-3 text-xs font-bold uppercase tracking-widest transition-colors border-b-2 whitespace-nowrap ${view === 'simulation' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-white'}`}
                     >
-                        Simulation Trace
+                        Trace
                     </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                    {view === 'details' ? (
-                        <div className="space-y-6">
+                    {view === 'details' && (
+                        <div className="space-y-6 animate-fadeIn">
                             <section>
                                 <h4 className="text-xs uppercase tracking-widest font-bold text-slate-500 mb-3">Primary Responsibilities</h4>
                                 <ul className="space-y-3">
@@ -130,13 +129,12 @@ const AgentModal: React.FC<AgentModalProps> = ({ agent, onClose, onCopyConfig })
                                 </div>
                             </div>
                         </div>
-                    ) : (
-                        <SimulationTraceViewer agentId={agent.id} />
                     )}
+                    
+                    {view === 'simulation' && <SimulationTraceViewer agentId={agent.id} />}
                 </div>
 
-                <footer className="p-6 border-t dark:border-dark-300 border-light-300 flex justify-between items-center bg-light-200 dark:bg-dark-300/30">
-                    <VoiceDemo agent={agent} />
+                <footer className="p-6 border-t dark:border-dark-300 border-light-300 flex justify-end items-center bg-light-200 dark:bg-dark-300/30">
                     <button
                         onClick={onClose}
                         className="px-6 py-2 rounded-lg bg-brand-primary text-white text-sm font-bold hover:bg-sky-400 transition-colors shadow-lg shadow-brand-primary/20"

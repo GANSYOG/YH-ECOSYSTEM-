@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
+
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import type { Agent } from '../types';
 
 interface SpeechContextType {
     isSpeaking: boolean;
     speakingAgentId: string | null;
-    playDemo: (agent: Agent) => void;
+    playDemo: (agent: Agent) => Promise<void>;
     stopDemo: () => void;
     canPlayDemo: (agent: Agent) => boolean;
 }
@@ -13,30 +13,16 @@ interface SpeechContextType {
 const SpeechContext = createContext<SpeechContextType | undefined>(undefined);
 
 export const SpeechProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
-    const { speak, cancel, isSpeaking, getLanguageData, isSupported } = useSpeechSynthesis();
-    const [speakingAgentId, setSpeakingAgentId] = useState<string | null>(null);
+    const [isSpeaking] = useState(false);
+    const [speakingAgentId] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (!isSpeaking) {
-            setSpeakingAgentId(null);
-        }
-    }, [isSpeaking]);
+    const playDemo = useCallback(async () => {
+        return Promise.resolve();
+    }, []);
     
-    const playDemo = useCallback((agent: Agent) => {
-        const langData = getLanguageData(agent.name);
-        if (langData) {
-            setSpeakingAgentId(agent.id);
-            speak(langData.text, langData.lang);
-        }
-    }, [getLanguageData, speak]);
+    const stopDemo = useCallback(() => {}, []);
     
-    const stopDemo = useCallback(() => {
-        cancel();
-    }, [cancel]);
-    
-    const canPlayDemo = useCallback((agent: Agent) => {
-        return isSupported && agent.division === 'Conversations' && !!getLanguageData(agent.name);
-    }, [getLanguageData, isSupported]);
+    const canPlayDemo = useCallback(() => false, []);
 
     const value = { isSpeaking, speakingAgentId, playDemo, stopDemo, canPlayDemo };
     
