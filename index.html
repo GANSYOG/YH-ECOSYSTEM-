@@ -16,21 +16,37 @@
         theme: {
           extend: {
             colors: {
-              'brand-primary': '#0ea5e9',
-              'brand-secondary': '#14b8a6',
-              'dark-100': '#0f172a',
-              'dark-200': '#1e293b',
-              'dark-300': '#334155',
-              'dark-content': '#cbd5e1',
-              'light-100': '#f8fafc',
-              'light-200': '#f1f5f9',
-              'light-300': '#e2e8f0',
-              'light-content': '#0f172a',
+              'brand-primary': '#6366f1',
+              'brand-secondary': '#a855f7',
+              'brand-accent': '#ec4899',
+              'dark-100': '#030712',
+              'dark-200': '#111827',
+              'dark-300': '#1f2937',
+              'dark-400': '#374151',
+              'dark-content': '#f3f4f6',
+              'light-100': '#ffffff',
+              'light-200': '#f9fafb',
+              'light-300': '#f3f4f6',
+              'light-400': '#e5e7eb',
+              'light-content': '#111827',
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
             },
             keyframes: {
-              fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+              fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+              pulseGlow: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.7' } },
+              slideIn: { '0%': { transform: 'translateX(-20px)', opacity: '0' }, '100%': { transform: 'translateX(0)', opacity: '1' } },
             },
-            animation: { fadeIn: 'fadeIn 0.3s ease-out' },
+            animation: {
+              fadeIn: 'fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+              pulseGlow: 'pulseGlow 2s ease-in-out infinite',
+              slideIn: 'slideIn 0.3s ease-out',
+            },
+            backdropBlur: {
+              xs: '2px',
+            }
           }
         }
       }
@@ -42,7 +58,7 @@
         "react/": "https://esm.sh/react@18.2.0/",
         "react-dom": "https://esm.sh/react-dom@18.2.0",
         "react-dom/": "https://esm.sh/react-dom@18.2.0/",
-        "@google/genai": "https://esm.sh/@google/genai@0.16.0"
+        "@google/generative-ai": "https://esm.sh/@google/generative-ai@0.21.0"
       }
     }
     </script>
@@ -53,5 +69,6 @@
   </head>
   <body class="bg-light-100 dark:bg-dark-100">
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>

@@ -95,7 +95,7 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen w-full bg-light-100 text-light-content dark:bg-dark-100 dark:text-dark-content transition-colors overflow-hidden">
+    <div className="flex h-screen w-full bg-light-100 text-light-content dark:bg-dark-100 dark:text-dark-content transition-all duration-500 overflow-hidden font-sans">
       <Sidebar 
         divisions={divisionNames} 
         selectedDivisions={selectedDivisions} 
@@ -106,33 +106,61 @@ const AppContent: React.FC = () => {
         currentView={appView}
       />
       
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        <header className="bg-light-200 dark:bg-dark-200 border-b border-light-300 dark:border-dark-300 p-4 flex justify-between items-center gap-4 flex-shrink-0 shadow-sm">
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-brand-primary/5 blur-[120px] pointer-events-none rounded-full" />
+        <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-brand-secondary/5 blur-[100px] pointer-events-none rounded-full" />
+
+        <header className="bg-light-100/80 dark:bg-dark-100/80 backdrop-blur-md border-b border-light-300 dark:border-dark-300 p-6 flex justify-between items-center gap-6 flex-shrink-0 z-10">
           <div className='flex-shrink-0'>
-            <h1 className="text-xl font-bold dark:text-white">{ecosystemData.ecosystem}</h1>
-            <p className="text-[10px] uppercase tracking-widest text-brand-primary font-bold">
-              Autonomous Network • v{ecosystemData.version}
-            </p>
+            <h1 className="text-2xl font-black dark:text-white tracking-tight flex items-center gap-2">
+              <span className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
+                {ecosystemData.ecosystem.split(' ')[0]}
+              </span>
+              <span className="font-light opacity-80">{ecosystemData.ecosystem.split(' ').slice(1).join(' ')}</span>
+            </h1>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-secondary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-secondary"></span>
+              </span>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold">
+                Neural Orchestration Engine • v{ecosystemData.version}
+              </p>
+            </div>
           </div>
 
-          <div className="flex-1 max-w-md hidden md:block">
-            <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+          <div className="flex-1 max-w-xl hidden lg:block">
+            <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-primary to-brand-secondary rounded-xl opacity-0 group-focus-within:opacity-20 transition-opacity blur-md" />
+                <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <input
                   type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-light-300 dark:bg-dark-300 border-none rounded-lg py-2 pl-10 text-sm placeholder-slate-500 focus:ring-2 focus:ring-brand-primary"
-                  placeholder="Query agents..."
+                  className="w-full bg-light-200/50 dark:bg-dark-200/50 border border-light-300 dark:border-dark-300 rounded-xl py-3 pl-12 pr-4 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:bg-light-100 dark:focus:bg-dark-100 transition-all shadow-inner"
+                  placeholder="Query autonomous neural agents..."
                 />
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <button 
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-lg dark:bg-dark-300 bg-light-300 text-slate-500 hover:text-brand-primary transition-colors"
+              className="p-2.5 rounded-xl dark:bg-dark-200 bg-light-200 text-slate-500 hover:text-brand-primary border border-light-300 dark:border-dark-300 transition-all hover:scale-105 active:scale-95"
             >
               {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
             </button>
+
+            <div className="h-8 w-[1px] bg-light-300 dark:bg-dark-300 mx-1 hidden sm:block" />
+
+            <div className="flex items-center gap-3 pl-2">
+               <div className="hidden sm:block text-right">
+                  <p className="text-xs font-bold dark:text-white leading-none">{user.email.split('@')[0]}</p>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-tighter mt-1">System {user.role}</p>
+               </div>
+               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white font-bold shadow-lg shadow-brand-primary/20">
+                  {user.email[0].toUpperCase()}
+               </div>
+            </div>
           </div>
         </header>
         
