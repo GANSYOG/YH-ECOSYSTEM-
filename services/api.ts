@@ -1,67 +1,72 @@
-import { ecosystemData } from '../data/ecosystemData';
+
 import type { Agent, User } from '../types';
 
-// Flatten the hierarchical division data into a standard map for easy lookup
-const isAgentArray = (value: unknown): value is Agent[] => {
-  return Array.isArray(value) && value.every(item => typeof item === 'object' && item !== null && 'id' in item);
-};
-
-const divisionsMap = new Map<string, Agent[]>();
-Object.entries(ecosystemData.divisions).forEach(([key, value]) => {
-  if (isAgentArray(value)) {
-    divisionsMap.set(key, value);
-  } else if (typeof value === 'object' && value !== null) {
-    Object.entries(value).forEach(([_, subValue]) => {
-      if (isAgentArray(subValue)) {
-        const existing = divisionsMap.get(key) || [];
-        divisionsMap.set(key, [...existing, ...subValue]);
-      }
-    });
-  }
-});
-
-const allAgents = Array.from(divisionsMap.values()).flat();
-const uniqueAgents = Array.from(new Map(allAgents.map(agent => [agent.id, agent])).values());
-
-// Helper for minimal delay
-const quickReturn = <T>(data: T): Promise<T> => Promise.resolve(data);
+const API_BASE = 'http://localhost:3001/api';
 
 export const login = async (email: string, _: string): Promise<User> => {
-    return quickReturn({ email, role: 'ADMIN' });
+    // In a real app, this would be a POST to /auth/login
+    return { email, role: 'ADMIN' };
 };
 
 export const register = async (email: string, _: string): Promise<User> => {
-    return quickReturn({ email, role: 'ADMIN' });
+    return { email, role: 'ADMIN' };
 };
 
 export const fetchDivisions = async (): Promise<string[]> => {
-    return quickReturn(Object.keys(ecosystemData.divisions));
+    const res = await fetch(`${API_BASE}/divisions`);
+    if (!res.ok) throw new Error('Failed to fetch divisions');
+    return res.json();
 };
 
 export const fetchAgents = async (options: { divisions?: string[], searchQuery?: string, page?: number, limit?: number }): Promise<{ agents: Agent[], total: number }> => {
     const { divisions = [], searchQuery = '', page = 1, limit = 12 } = options;
-    let filteredAgents: Agent[] = [];
 
-    if (searchQuery.trim() !== '') {
-        const query = searchQuery.toLowerCase();
-        filteredAgents = uniqueAgents.filter(a =>
-            a.name.toLowerCase().includes(query) ||
-            a.role.toLowerCase().includes(query) ||
-            a.responsibilities.some(r => r.toLowerCase().includes(query))
-        );
-    } else if (divisions.length > 0) {
-        filteredAgents = divisions.flatMap(d => divisionsMap.get(d) || []);
-        // De-duplicate in case of overlap
-        filteredAgents = Array.from(new Map(filteredAgents.map(a => [a.id, a])).values());
-    } else {
-        filteredAgents = uniqueAgents;
-    }
+    const params = new URLSearchParams();
+    if (searchQuery) params.append('searchQuery', searchQuery);
+    divisions.forEach(d => params.append('divisions', d));
+    params.append('page', page.toString());
+    params.append('limit', limit.toString());
 
-    const total = filteredAgents.length;
-    const paginated = filteredAgents.slice((page - 1) * limit, page * limit);
-    return quickReturn({ agents: paginated, total });
+    const res = await fetch(`${API_BASE}/agents?${params.toString()}`);
+    if (!res.ok) throw new Error('Failed to fetch agents');
+    return res.json();
 };
 
-export const updateAgentConfig = async (_user: User, _id: string, _config: Partial<Agent>) => {
-    return quickReturn({ success: true });
+export const createAgent = async (agent: Partial<Agent>): Promise<Agent> => {
+    const res = await fetch(`${API_BASE}/agents`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(agent)
+    });
+    if (!res.ok) throw new Error('Failed to create agent');
+    return res.json();
+};
+
+export const updateAgentConfig = async (user: User, id: string, config: Partial<Agent>): Promise<Agent> => {
+    const res = await fetch(`${API_BASE}/agents/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config)
+    });
+    if (!res.ok) throw new Error('Failed to update agent');
+    return res.json();
+};
+
+export const deleteAgent = async (id: string): Promise<void> => {
+    const res = await fetch(`${API_BASE}/agents/${id}`, {
+        method: 'DELETE'
+    });
+    if (!res.ok) throw new Error('Failed to delete agent');
+};
+
+export const fetchLogs = async (): Promise<any[]> => {
+    const res = await fetch(`${API_BASE}/logs`);
+    if (!res.ok) throw new Error('Failed to fetch logs');
+    return res.json();
+};
+
+export const fetchStats = async (): Promise<any> => {
+    const res = await fetch(`${API_BASE}/stats`);
+    if (!res.ok) throw new Error('Failed to fetch stats');
+    return res.json();
 };
