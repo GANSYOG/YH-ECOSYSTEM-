@@ -12,12 +12,23 @@ export const getGeminiResponse = async (agent: Agent, history: GeminiMessage[]) 
     });
 
     if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Server error');
+        let errorMessage = 'Server error';
+        try {
+            const errorData = await res.json();
+            errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+            // Handle cases where response is not JSON (e.g. 502/504 errors from a proxy)
+            errorMessage = `HTTP error! status: ${res.status}${res.statusText ? ` (${res.statusText})` : ''}`;
+        }
+        throw new Error(errorMessage);
     }
 
-    const data = await res.json();
-    return data;
+    try {
+        const data = await res.json();
+        return data;
+    } catch (e) {
+        throw new Error('Failed to parse response as JSON');
+    }
   } catch (error: any) {
     console.error("Gemini API Error:", error);
     throw error;
