@@ -44,6 +44,22 @@ const updateStats = (responseTime: number) => {
     fs.writeFileSync(STATS_FILE, JSON.stringify(stats, null, 2));
 };
 
+// Security: Mass Assignment Protection
+const ALLOWED_AGENT_FIELDS = [
+    'name', 'division', 'role', 'responsibilities', 'inputs',
+    'outputs', 'triggers', 'runbook_summary', 'sla', 'owner'
+];
+
+const filterAgentData = (data: any) => {
+    const filtered: any = {};
+    ALLOWED_AGENT_FIELDS.forEach(field => {
+        if (data[field] !== undefined) {
+            filtered[field] = data[field];
+        }
+    });
+    return filtered;
+};
+
 // --- Agent Routes ---
 app.get('/api/agents', (req, res) => {
     const { divisions, searchQuery, page = '1', limit = '12' } = req.query as any;
@@ -77,7 +93,11 @@ app.get('/api/divisions', (req, res) => {
 
 app.post('/api/agents', (req, res) => {
     const agents = getAgents();
-    const newAgent = { ...req.body, id: req.body.id || `agent-${Date.now()}` };
+    const filteredData = filterAgentData(req.body);
+    const newAgent = {
+        ...filteredData,
+        id: (req.body.id && typeof req.body.id === 'string') ? req.body.id : `agent-${Date.now()}`
+    };
     agents.push(newAgent);
     saveAgents(agents);
     res.json(newAgent);
@@ -88,7 +108,8 @@ app.put('/api/agents/:id', (req, res) => {
     let agents = getAgents();
     const index = agents.findIndex((a: any) => a.id === id);
     if (index !== -1) {
-        agents[index] = { ...agents[index], ...req.body };
+        const filteredData = filterAgentData(req.body);
+        agents[index] = { ...agents[index], ...filteredData };
         saveAgents(agents);
         res.json(agents[index]);
     } else {
