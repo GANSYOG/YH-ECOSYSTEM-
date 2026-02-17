@@ -1,8 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { User, Agent } from '../types';
 import { UserIcon, SoundWaveIcon, GridIcon, DashboardIcon } from './Icons';
 import * as api from '../services/api';
+import ConfirmationModal from './ConfirmationModal';
+import Toast from './Toast';
 
 interface AdminDashboardProps {
   user: User | null;
@@ -30,6 +32,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
   const [stats, setStats] = useState<any>({ responseTimes: [], totalRequests: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
+  const [deletingAgentId, setDeletingAgentId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string } | null>(null);
 
   useEffect(() => {
     refreshData();
@@ -50,12 +54,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     api.fetchStats().then(setStats).catch(console.error);
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to decommission this neural agent? This action is irreversible.')) {
-        await api.deleteAgent(id);
-        refreshData();
+  const handleDelete = useCallback((id: string) => {
+    setDeletingAgentId(id);
+  }, []);
+
+  const confirmDelete = useCallback(async () => {
+    if (deletingAgentId) {
+        try {
+            await api.deleteAgent(deletingAgentId);
+            setToast({ message: 'Neural agent successfully decommissioned.' });
+            refreshData();
+        } catch (error) {
+            setToast({ message: 'Failed to decommission agent.' });
+        } finally {
+            setDeletingAgentId(null);
+        }
     }
-  };
+  }, [deletingAgentId]);
+
+  const cancelDelete = useCallback(() => {
+    setDeletingAgentId(null);
+  }, []);
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -225,6 +244,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             </div>
         )}
       </div>
+
+      {toast && <Toast message={toast.message} onClose={() => setToast(null)} />}
+
+      <ConfirmationModal
+        isOpen={!!deletingAgentId}
+        title="Decommission Agent"
+        message="Are you sure you want to decommission this neural agent? This action is irreversible."
+        confirmLabel="Decommission"
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        isDanger={true}
+      />
 
       {editingAgent && (
           <div className="fixed inset-0 bg-dark-100/80 backdrop-blur-md z-[100] flex items-center justify-center p-6">
