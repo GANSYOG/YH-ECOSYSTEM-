@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { User, Agent } from '../types';
 import { UserIcon, SoundWaveIcon, GridIcon, DashboardIcon } from './Icons';
 import * as api from '../services/api';
@@ -89,6 +89,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     ? Math.round(stats.responseTimes.reduce((a:number, b:number) => a + b, 0) / stats.responseTimes.length)
     : 0;
 
+  const reversedLogs = useMemo(() => [...logs].reverse(), [logs]);
+
   return (
     <div className="flex-1 overflow-hidden flex flex-col h-full animate-fadeIn relative z-10">
       <header className="p-10 pb-0 flex-shrink-0">
@@ -162,7 +164,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-light-300 dark:divide-dark-300 dark:bg-dark-200/50">
-                            {logs.length > 0 ? [...logs].reverse().map((log, i) => (
+                            {reversedLogs.length > 0 ? reversedLogs.map((log, i) => (
                                 <tr key={i} className="group hover:bg-brand-primary/5 transition-colors">
                                     <td className="p-6 font-mono text-[10px] text-slate-400">{new Date(log.timestamp).toLocaleTimeString()}</td>
                                     <td className="p-6 font-bold dark:text-white">{log.agentName}</td>
