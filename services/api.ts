@@ -1,7 +1,7 @@
 
 import type { Agent, User } from '../types';
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = '/api';
 
 export const login = async (email: string, _: string): Promise<User> => {
     // In a real app, this would be a POST to /auth/login
